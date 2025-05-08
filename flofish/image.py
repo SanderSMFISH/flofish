@@ -8,7 +8,7 @@ import numpy as np
 import re
 import json, jsonpickle
 
-from omnipose.gpu import use_gpu
+#from omnipose.gpu import use_gpu
 # from cellpose_omni import io, transforms
 from cellpose_omni import models
 
@@ -284,8 +284,9 @@ class Image:
         maskfile_latest = Path(self.savepath) / f'DIC_masks.model={model_type}_chan={str(params["channels"]).replace(" ", "")}_diameter={params["diameter"]}_minsize={params["min_size"]}_mask={params["mask_threshold"]}_flow={params["flow_threshold"]}.tif'
         io.imsave(maskfile_latest, mask)
         cellmaskfile = Path(self.savepath) / 'DIC_masks.tif'
-        cellmaskfile.unlink(missing_ok=True)
-        cellmaskfile.symlink_to(maskfile_latest.parts[-1])
+        #cellmaskfile.unlink(missing_ok=True)
+        #cellmaskfile.symlink_to(maskfile_latest.parts[-1])
+        io.imsave(cellmaskfile, mask)
         logging.info(f"writing cell mask to {maskfile_latest}")
 
 
@@ -300,8 +301,8 @@ class Image:
         # This checks to see if you have set up your GPU properly.
         # CPU performance is a lot slower, but not a problem if you
         # are only processing a few images.
-        use_GPU = use_gpu()
-
+        #use_GPU = use_gpu()
+        use_GPU = False
         # model for nuclei
         model_type = "nuclei"
         model = models.CellposeModel(gpu=use_GPU, model_type=model_type)
@@ -337,8 +338,9 @@ class Image:
         maskfile_latest = Path(self.savepath) / f'DAPI_masks_model={model_type}_chan={str(params["channels"]).replace(" ", "")}_diameter={params["diameter"]}_minsize={params["min_size"]}_mask={params["mask_threshold"]}_flow={params["flow_threshold"]}.tif'
         io.imsave(maskfile_latest, mask)
         cellmaskfile = Path(self.savepath) / 'DAPI_masks.tif'
-        cellmaskfile.unlink(missing_ok=True)
-        cellmaskfile.symlink_to(maskfile_latest.parts[-1])
+        #cellmaskfile.unlink(missing_ok=True)
+        #cellmaskfile.symlink_to(maskfile_latest.parts[-1])
+        io.imsave(cellmaskfile, mask)
         logging.info(f"writing DAPI mask to {maskfile_latest}")
 
 

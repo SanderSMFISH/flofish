@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 from flofish.image import Image
 
-from omnipose.gpu import use_gpu
+#from omnipose.gpu import use_gpu
 from cellpose_omni import models
 
 
@@ -91,7 +91,8 @@ class Experiment:
         # This checks to see if you have set up your GPU properly.
         # CPU performance is a lot slower, but not a problem if you
         # are only processing a few images.
-        self.use_GPU = use_gpu()
+        #self.use_GPU = use_gpu()
+        self.use_GPU = False
 
         #default_model = models.CellposeModel(gpu=use_GPU, model_type="cyto2_omni")
         # default channels options: [1,2]

@@ -7,7 +7,7 @@ from flofish.image import Image
 import numpy as np
 from skimage import io
 
-from omnipose.gpu import use_gpu
+#from omnipose.gpu import use_gpu
 from cellpose_omni import models
 
 
@@ -28,7 +28,7 @@ def my_image(exp16):
 
 @pytest.fixture
 def my_grgb():
-    file = "flofish/tests/data/omnipose/input/grgb.npy"
+    file = "flofish/tests/data/exp16/input/grgb.npy"
     return np.load(file)
 
 
@@ -63,8 +63,8 @@ def test_omnipose(my_grgb):
     # This checks to see if you have set up your GPU properly.
     # CPU performance is a lot slower, but not a problem if you
     # are only processing a few images.
-    use_GPU = use_gpu()
-
+    #use_GPU = use_gpu()
+    use_GPU = False
     # model = models.CellposeModel(gpu=use_GPU, model_type="cyto2")
     # params['channels'] = [2, 0]
 
@@ -73,11 +73,11 @@ def test_omnipose(my_grgb):
 
     mask, flow, style = model.eval(my_grgb, **params)
     logging.info(f'Found {np.max(mask)} cells')
-    savepath = Path('flofish/tests/data/omnipose/output')
+    savepath = Path('flofish/tests/data/exp16/output/MG1655_GLU_OD_0.3_left_02')
     savepath.mkdir(exist_ok=True)
     io.imsave(savepath / 'masks.tif', mask)
 
-    assert np.all(mask == io.imread('flofish/tests/data/omnipose/expected/masks.tif'))
+    assert np.all(mask == io.imread('flofish/tests/data/exp16/output/MG1655_GLU_OD_0.3_left_02/masks.tif'))
 
 
 def test_pipeline(my_image):
@@ -155,6 +155,3 @@ def test_from_json(my_image_from_json):
     assert isinstance(my_image_from_json, Image) == True
     assert isinstance(my_image_from_json.experiment, Experiment) == True
     pass
-
-
-

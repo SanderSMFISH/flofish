@@ -13,9 +13,9 @@ The module expects a directory containing the following files:
 
 
 # Installation
-You can install `flofish` via [pip]:
+You can install `flofish` locally after cloning the repo:
 
-    pip install flofish
+    pip install -e . 
 
 # Dependencies
 Dependencies are listed in `pyproject.toml`
@@ -24,6 +24,8 @@ Mostly:
 - `big-fish`: for smFISH image processing.
 - `omnipose`: a working Omnipose with GPU support. GPU is not a prerequisite as such but I haven't tested without a GPU so the code might need tweaking to run without a GPU.
 - `bioio_bioformats`: to open VSI images. This requires a working Java environment.
+- `pytests`: to perform test on the library.
+- `natsort` : to sort file names. Used in sorting image lists. 
 
 Details:
  - Omnipose
@@ -42,6 +44,7 @@ Details:
 
    Run `omnipose` from the command line.
 
+Omnipose has to be installed with GPU support (https://omnipose.readthedocs.io/installation.html#gpu-support). Alternatively, the variable use_GPU can be set to False in experiment.py and the test python scripts.  
 
 - Other
    ```
@@ -54,15 +57,15 @@ Details:
    - deactivate and reactivate myenv for `scyjava` to work
    - edit `peakdetect.py` fft import line to: `from scipy.fft import fft, ifft`
 # Test data
-Available at: https://zenodo.org/records/14879324
-
-Or see `workflow.ipynb` for download (requires `napari-flofish`, install with pip).
+Available at:
+ 
+ https://zenodo.org/records/15363842?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImFlZGRhNmYwLTNlMTEtNGI4My04ZGRkLTYyNTZkYTc5OTMxMSIsImRhdGEiOnt9LCJyYW5kb20iOiIwMjgyMzRmMTU4ZGZmMzJmNDNiYTI1NmVhY2ExYmNlNiJ9.FJNbsgQRhn8l9M-n_yNVmmEbogVZksTIsVcl7GUr-wJ2MPSTzHB-2evTRv3uSpxZ0CDn747EUTrZZx7zZhHZ0Q.
 
 # Typical workflow
-1. Batch process inputs to TIF files: `flofish/workflow.ipynb`
+1. Batch process inputs to TIF files: `flofish/bulk_processing.ipynb`
 2. Find good segmentation parameters using Omnipose GUI
-3. Batch segment DIC and DAPI pictures: `flofish/workflow.ipynb`
+3. Batch segment DIC and DAPI pictures: `flofish/bulk_processing.ipynb`
 4. Find good spot detection parameters using napari-flofish plugin
    1. Load an img.json file in napari
    2. Tweak spot detection parameters
-5. Batch detect spots: `flofish/workflow.ipynb`
+5. Batch detect spots: `flofish/bulk_processing.ipynb`

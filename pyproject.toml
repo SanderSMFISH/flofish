@@ -19,6 +19,8 @@ dependencies = [
     "bioio_bioformats",
     "scikit-image",
     "numpy",
+    "pytest",
+    "natsort"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
