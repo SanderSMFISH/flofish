@@ -1,0 +1,1 @@
+This folder will collect the ouput from procesing the example data.
