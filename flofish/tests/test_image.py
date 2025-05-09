@@ -12,13 +12,13 @@ from cellpose_omni import models
 
 
 @pytest.fixture
-def exp16():
-    cfg_file = "flofish/tests/data/exp16/config.json"
+def exp():
+    cfg_file = "flofish/tests/data/config.json"
     return Experiment.from_cfg_file(cfg_file)
 
 
 @pytest.fixture
-def my_image(exp16):
+def my_image(exp):
     my_params = {
         'vsi_file': "MG1655_GLU_OD_0.3_left_CY5, CY3.5 NAR, CY3, DAPI_02.vsi",
         'cell_file': "MG1655_GLU_OD_0.3_left_DIC_02.tif"
@@ -28,7 +28,7 @@ def my_image(exp16):
 
 @pytest.fixture
 def my_grgb():
-    file = "flofish/tests/data/exp16/input/grgb.npy"
+    file = "flofish/tests/data/input/grgb.npy"
     return np.load(file)
 
 
@@ -73,11 +73,11 @@ def test_omnipose(my_grgb):
 
     mask, flow, style = model.eval(my_grgb, **params)
     logging.info(f'Found {np.max(mask)} cells')
-    savepath = Path('flofish/tests/data/exp16/output/MG1655_GLU_OD_0.3_left_02')
+    savepath = Path('flofish/tests/data/output/MG1655_GLU_OD_0.3_left_02')
     savepath.mkdir(exist_ok=True)
     io.imsave(savepath / 'masks.tif', mask)
 
-    assert np.all(mask == io.imread('flofish/tests/data/exp16/output/MG1655_GLU_OD_0.3_left_02/masks.tif'))
+    assert np.all(mask == io.imread('flofish/tests/data/output/MG1655_GLU_OD_0.3_left_02/masks.tif'))
 
 
 def test_pipeline(my_image):
@@ -146,8 +146,8 @@ def test_pipeline(my_image):
 
 
 @pytest.fixture
-def my_image_from_json(exp16):
-    img_json = "flofish/tests/data/exp16/output/MG1655_GLU_OD_0.3_left_02/img.json"
+def my_image_from_json(exp):
+    img_json = "flofish/tests/data/output/MG1655_GLU_OD_0.3_left_02/img.json"
     return Image.from_json(img_json, exp16)
 
 
