@@ -239,26 +239,50 @@ class Image:
         # otherwise load it
         self.load_data('grgb')
 
-        # pass parameters to model
-        params = {
-            'channels': [1, 2],  # always define this with the model
-            'rescale': None,  # upscale or downscale your images, None = no rescaling
-            'mask_threshold': 0,  # erode or dilate masks with higher or lower values between -5 and 5
-            'flow_threshold': 0,
-            'min_size': 200,
-            'diameter': 0,
-            'invert': False,
-            'transparency': True,  # transparency in flow output
-            'omni': True,  # we can turn off Omnipose mask reconstruction, not advised
-            'cluster': True,  # use DBSCAN clustering
-            'resample': True,  # whether or not to run dynamics on rescaled grid or original grid
-            'verbose': False,  # turn on if you want to see more output
-            'tile': False,  # average the outputs from flipped (augmented) images; slower, usually not needed
-            'niter': None,
-            # default None lets Omnipose calculate # of Euler iterations (usually <20) but you can tune it for over/under segmentation
-            'augment': False,  # Can optionally rotate the image and average network outputs, usually not needed
-            'affinity_seg': False,  # new feature, stay tuned...
-        }
+        if self.experiment.parameters["organism"] == 'E.coli': 
+
+            params = {
+                'channels': [1, 2],  # always define this with the model
+                'rescale': None,  # upscale or downscale your images, None = no rescaling
+                'mask_threshold': 0,  # erode or dilate masks with higher or lower values between -5 and 5
+                'flow_threshold': 0,
+                'min_size': 20,
+                'diameter': 0,
+                'invert': False,
+                'transparency': True,  # transparency in flow output
+                'omni': True,  # we can turn off Omnipose mask reconstruction, not advised
+                'cluster': True,  # use DBSCAN clustering
+                'resample': True,  # whether or not to run dynamics on rescaled grid or original grid
+                'verbose': False,  # turn on if you want to see more output
+                'tile': False,  # average the outputs from flipped (augmented) images; slower, usually not needed
+                'niter': None,
+                # default None lets Omnipose calculate # of Euler iterations (usually <20) but you can tune it for over/under segmentation
+                'augment': False,  # Can optionally rotate the image and average network outputs, usually not needed
+                'affinity_seg': False,  # new feature, stay tuned...
+            }
+        
+
+        elif self.experiment.parameters["organism"] == 'S.cerevisiae': 
+
+            params = {
+                'channels': [1, 2],  # always define this with the model
+                'rescale': None,  # upscale or downscale your images, None = no rescaling
+                'mask_threshold': -3,  # erode or dilate masks with higher or lower values between -5 and 5
+                'flow_threshold': 1,
+                'min_size': 10,
+                'diameter': 50,
+                'invert': False,
+                'transparency': True,  # transparency in flow output
+                'omni': True,  # we can turn off Omnipose mask reconstruction, not advised
+                'cluster': True,  # use DBSCAN clustering
+                'resample': True,  # whether or not to run dynamics on rescaled grid or original grid
+                'verbose': False,  # turn on if you want to see more output
+                'tile': False,  # average the outputs from flipped (augmented) images; slower, usually not needed
+                'niter': None,
+                # default None lets Omnipose calculate # of Euler iterations (usually <20) but you can tune it for over/under segmentation
+                'augment': False,  # Can optionally rotate the image and average network outputs, usually not needed
+                'affinity_seg': False,  # new feature, stay tuned...
+            }
 
         # overwrite default segmentation parameters with img.json values
         if hasattr(self, 'segmentation'):
@@ -327,6 +351,7 @@ class Image:
             'affinity_seg': False, # new feature, stay tuned...
         }
 
+        
         mask, flow, style = model.eval(self.grgb[2, ...], **params)
         logging.info(f'Found {np.max(mask)} cells')
 
@@ -461,7 +486,7 @@ class Image:
         filtered_spot_intensities = np.resize(np.array([filtered_padded_intensities[s[0], s[1], s[2]] for s in spots]),
                                               (len(spots), 1))
         # should we use expanded cell masks here?
-        labels = [self.cell_masks[y, x] for (y, x) in spots[:, 1:3]]
+        labels = [self.cell_masks_expanded[y, x] for (y, x) in spots[:, 1:3]]
         spots_with_intensities = np.concatenate(
             (spots, spot_intensities, filtered_spot_intensities, np.array(labels).reshape((len(labels), 1))), axis=1)
         np.save(Path(self.savepath) / f'{ch}_spots.npy', spots_with_intensities)
@@ -516,13 +541,16 @@ class Image:
 
 
     def assign_spots_channel(self, ch):
-        cell_mask_data = self.cell_masks
-        expanded_cell_mask_data = self.cell_masks_expanded
-        nuclear_mask_data = self.dapi_masks
+        # reload these as changes could have been made to the cell and nuclear masks.
+        self.cell_masks = io.imread(Path(self.savepath) / f'DIC_masks_pp.tif')
+        self.cell_masks_expanded = io.imread(Path(self.savepath) / f'DIC_masks_pp_expanded.tif')
+        self.dapi_masks = io.imread(Path(self.savepath) / f'DAPI_masks.tif')
+
+        #load spot data 
         spot_data = self.mrna.get(ch)['spots'][:, 0:3]
         dense_data = self.mrna.get(ch)['dense_regions']
 
-        df = spot_assignment(cell_mask_data, expanded_cell_mask_data, nuclear_mask_data, spot_data, dense_data)
+        df = spot_assignment(self.cell_masks, self.cell_masks_expanded, self.dapi_masks, spot_data, dense_data)
 
         df.rename(columns={'label': 'image_cell_id'}, inplace=True)
         cell_columns = ['image_cell_id',
@@ -533,10 +561,10 @@ class Image:
                         'orientation_expanded', 'perimeter_expanded', 'solidity_expanded',
                         'nuclei']
         df_cells = df[cell_columns]
-        rna_columns = ['image_cell_id', 'spots', 'dense_regions', 'decomposed_RNAs', 'tx', 'nascent_RNAs', 'total_RNAs']
-        df_rnas = df.loc[:, rna_columns]
+        #rna_columns = ['image_cell_id', 'spots', 'dense_regions', 'decomposed_RNAs', 'tx', 'nascent_RNAs', 'total_RNAs']
+        #df_rnas = df.loc[:, rna_columns]
         # df_rnas['mrna'] = ch
-        df_rnas.to_csv(Path(self.savepath) / f'{ch}.csv', index=False)
+        df_cells.to_csv(Path(self.savepath) / f'{ch}.csv', index=False)
         logging.info(f'..channel {ch}: saving results to {self.savepath}/{ch}.csv')
 
 

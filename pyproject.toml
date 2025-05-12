@@ -20,7 +20,8 @@ dependencies = [
     "scikit-image",
     "numpy",
     "pytest",
-    "natsort"
+    "natsort",
+    "jupyter"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

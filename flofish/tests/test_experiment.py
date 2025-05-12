@@ -13,9 +13,9 @@ def exp():
 #     return Experiment.from_cfg_file("/Volumes/KINGSTON/Florence/smFISH/zenodo/smfish-analysis/tests/data/exp24/config.json")
 
 
-def test_experiment_exp16(exp):
+def test_experiment_exp(exp):
     assert len(exp.channels) == 4
-    exp16.create_image_list()
+    exp.create_image_list()
     pass
 
 # def test_experiment_exp24(exp24):
@@ -24,9 +24,9 @@ def test_experiment_exp16(exp):
 #     pass
 
 
-def test_experiment_from_jsons_exp16(exp):
+def test_experiment_from_jsons_exp(exp):
     assert len(exp.channels) == 4
-    exp16.read_image_list_from_jsons()
+    exp.read_image_list_from_jsons()
     pass
 
 
@@ -37,11 +37,11 @@ def test_experiment_from_jsons_exp16(exp):
 
 
 def test_configure_exp(exp):
-    exp16.create_image_list()
+    exp.create_image_list()
 
-    for params in exp16.images.values():
+    for params in exp.images.values():
         logging.info(params)
-        my_image = Image.from_dict(params, exp16)
+        my_image = Image.from_dict(params, exp)
 
         tic = time.time()
         my_image.read_image()
@@ -61,7 +61,7 @@ def test_segment_exp(exp):
 
     for f in exp.json_files:
         logging.info(f'image: {f}')
-        my_image = Image.from_json(f, exp16)
+        my_image = Image.from_json(f, exp)
 
         # segment image (~ 02-segment)
         tic = time.time()
@@ -81,11 +81,11 @@ def test_segment_exp(exp):
         my_image.save_metadata("segment")
 
 def test_spots_exp(exp):
-    exp16.read_image_list_from_jsons()
+    exp.read_image_list_from_jsons()
 
     for f in exp.json_files:
         logging.info(f'image: {f}')
-        my_image = Image.from_json(f, exp16)
+        my_image = Image.from_json(f, exp)
 
         # detect spots (~ 03-detect-spots)
         tic = time.time()

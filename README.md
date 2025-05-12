@@ -59,7 +59,7 @@ Omnipose has to be installed with GPU support (https://omnipose.readthedocs.io/i
 # Test data
 Available at:
  
- https://zenodo.org/records/15363842?token=eyJhbGciOiJIUzUxMiJ9.eyJpZCI6ImFlZGRhNmYwLTNlMTEtNGI4My04ZGRkLTYyNTZkYTc5OTMxMSIsImRhdGEiOnt9LCJyYW5kb20iOiIwMjgyMzRmMTU4ZGZmMzJmNDNiYTI1NmVhY2ExYmNlNiJ9.FJNbsgQRhn8l9M-n_yNVmmEbogVZksTIsVcl7GUr-wJ2MPSTzHB-2evTRv3uSpxZ0CDn747EUTrZZx7zZhHZ0Q.
+https://zenodo.org/records/15363842
 
 # Typical workflow
 1. Batch process inputs to TIF files: `flofish/bulk_processing.ipynb`

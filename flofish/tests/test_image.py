@@ -23,7 +23,7 @@ def my_image(exp):
         'vsi_file': "MG1655_GLU_OD_0.3_left_CY5, CY3.5 NAR, CY3, DAPI_02.vsi",
         'cell_file': "MG1655_GLU_OD_0.3_left_DIC_02.tif"
     }
-    return Image.from_dict(my_params, exp16)
+    return Image.from_dict(my_params, exp)
 
 
 @pytest.fixture
@@ -148,7 +148,7 @@ def test_pipeline(my_image):
 @pytest.fixture
 def my_image_from_json(exp):
     img_json = "flofish/tests/data/output/MG1655_GLU_OD_0.3_left_02/img.json"
-    return Image.from_json(img_json, exp16)
+    return Image.from_json(img_json, exp)
 
 
 def test_from_json(my_image_from_json):
